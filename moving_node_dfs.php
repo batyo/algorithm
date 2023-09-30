@@ -4,12 +4,10 @@
  * ノードの移動 (深さ優先探索)
  *
  * @param array $adjacentList   隣接リスト
- * @param array $path           移動経路
- * @param int   $currentNode    現在のノード
+ * @param array $path           移動経路    初期値: $path = array(array($currentNode))
+ * @param int   $currentNode    現在の(開始)ノード
  * @param int   $diceNumber     残り移動数
- * @param array $nodeRecord     ノードに記録された残り移動数    
- * 
- * @return array    $path   移動経路 $path[0] は空の状態でリターンされる
+ * @param array $nodeRecord     ノードに記録された残り移動数    初期値: $nodeRecord = array_fill(0, count("ノード数"), [9999])
  */
 function moving_node_dfs(&$adjacentList, &$path, $currentNode, $diceNumber, $nodeRecord)
 {
@@ -37,6 +35,4 @@ function moving_node_dfs(&$adjacentList, &$path, $currentNode, $diceNumber, $nod
 
     // 前のノードに戻る前に現在のノードを移動経路から削除する
     array_pop($path[0]);
-
-    return $path;
 }
