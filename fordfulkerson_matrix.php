@@ -115,4 +115,14 @@ class FordFulkerson
 		// 増加パスが見つからない場合
         return null;
     }
+
+    /**
+     * グラフ取得
+     *
+     * @return array
+     */
+    public function getGraph()
+    {
+        return $this->graph;
+    }
 }
