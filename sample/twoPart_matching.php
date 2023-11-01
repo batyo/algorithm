@@ -2,6 +2,10 @@
 
 require_once("../fordfulkerson_matrix.php");
 
+// フォードファルカーソン法を応用した二部グラフマッチング
+// 「従業員」と「シフト」のマッチング
+
+
 // グラフの隣接行列
 
 $employeeCount = 0; // 従業員数
