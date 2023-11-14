@@ -107,6 +107,7 @@ for ($shift = 1; $shift <= $shiftCount; $shift++) $graph[$shift+$employeeCount][
 // 優先順位グラフの初期化
 $priority = array_fill(0, $totalNumberNode, array_fill(0, $totalNumberNode, -1));
 
+// 優先順位の重複チェック
 $priorityRankCheck = [];
 
 // グラフ入力
