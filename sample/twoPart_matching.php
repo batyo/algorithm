@@ -24,14 +24,14 @@ class Matching extends FordFulkerson
      * @param int $employeeCount    従業員数
      * @param int $shiftCount       シフト数
      * 
-     * @return array
+     * @return array 探索順に従業員番号が格納された配列
      */
     public function rearrangingNode($employeeCount, $shiftCount)
     {
         // シフトの選択肢が少ない従業員のノードから探索するようにする
         $choiceCount_list = [];
         for ($employee = 1; $employee <= $employeeCount; $employee++) {
-            $choiceCount = 0;
+            $choiceCount = 0; // 従業員が持つ選択肢の総数
             for ($shift = 1; $shift <= $shiftCount; $shift++) {
                 if ($this->graph[$employee][$shift+$employeeCount] == 1) $choiceCount++;;
                 if ($shift == $shiftCount) $choiceCount_list[$employee] = $choiceCount;
@@ -68,6 +68,7 @@ class Matching extends FordFulkerson
             }
         }
 
+        // 探索順に並び替えられた従業員番号
         $priorityOrder = array_keys($lastSort);
 
         // 並び替えた従業員に合わせたシフトをセットする
@@ -124,7 +125,7 @@ while (true) {
 
     $inputChecked = false;
     while ( !$inputChecked ) {
-        echo "employee preferredShift:";
+        echo "employee preferredShift priorityRank:";
         fscanf(STDIN, "%d %d %d", $employeeNumber, $preferredShift, $priorityRank);
 
         if (isset($priorityRankCheck[$employeeNumber][$priorityRank])) {
