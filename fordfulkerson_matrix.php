@@ -5,8 +5,8 @@
  */
 class FordFulkerson
 {
-    private $graph;   // グラフの隣接行列
-    private $visited; // ノードの訪問状態
+    protected $graph;   // グラフの隣接行列
+    protected $visited; // ノードの訪問状態
 
     /**
      * FordFulkerson コンストラクタ
@@ -82,7 +82,7 @@ class FordFulkerson
      *
      * @return array|null 増加パスを表すノードの配列（見つからない場合はnull）
      */
-    private function findPath($startNode, $endNode)
+    protected function findPath($startNode, $endNode)
     {
         $searchReservedNode = [$startNode]; // 探索予定のノードリスト
         $path = []; // 増加パス
