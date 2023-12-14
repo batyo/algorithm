@@ -21,4 +21,4 @@ If you have any suggestions for improvement, please feel free to leave a comment
 * フォードファルカーソン法を応用した二部マッチング問題
 * 「従業員」と「シフト」を従業員の希望を考慮しながらマッチング数が最大になるようマッチングさせます
 * シフトノードから終着ノードへの増加パスを変更することで「シフト」に割り当てることができる「従業員」の人数を操作できますが、その場合は従業員ノードからシフトノードを探索する部分のアルゴリズムを優先順位の高いシフトノードから探索するように変更する必要があります。(この機能については後日対応するかもしれません)
-[フォールドファルカーソン法を応用した二部マッチング] (https://github.com/batyo/algorithm/blob/master/twoPart_matching_flowChart.md, "twoPart_matching_flowChart.md")
+* [フォールドファルカーソン法を応用した二部マッチング](https://github.com/batyo/algorithm/blob/master/twoPart_matching_flowChart.md, "twoPart_matching_flowChart.md")
