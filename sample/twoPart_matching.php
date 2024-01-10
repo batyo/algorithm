@@ -87,6 +87,137 @@ class Matching extends FordFulkerson
         
         return $priorityOrder;
     }
+
+    /**
+     * 最大フローを計算するメソッド
+     *
+     * @param int   $startNode        始発点のノード
+     * @param int   $endNode          終着点のノード
+     * @param int   $employeeCount    従業員数
+     * @param array $sortedEmployee   従業員を優先順にソートした配列
+     *
+     * @return int 最大フローの値
+     */
+    public function maxMatch($startNode, $endNode, $employeeCount, $sortedEmployee)
+    {
+        $maxFlow = 0; // 最大流量
+
+        while ($path = $this->findPath($startNode, $endNode, $employeeCount, $sortedEmployee)) {
+            
+            $INF = PHP_INT_MAX; // 無限
+            $minCapacity = $INF; // 最小容量
+            
+            $current = $endNode; // 現在のノード
+
+            // 増加パス上で最小容量を見つける
+            while ($current !== $startNode) {
+                $to_prev = $path[$current]; // 1つ前のノード
+                $from_prevCapacity = $this->graph[$to_prev][$current]; // 1つ前のノードからの容量
+                $minCapacity = min($minCapacity, $from_prevCapacity);
+                $current = $to_prev; // 1つ前のノードへ進む(戻る)
+            }
+
+            // 最小容量を最大フローに加え、残余グラフを更新する
+            $maxFlow += $minCapacity;
+            $current = $endNode;
+
+			// 残余グラフを更新
+            while ($current !== $startNode) {
+                $to_prev = $path[$current];
+
+                // 順方向の辺の容量を更新 (進んだ容量分減らす)
+                $this->graph[$to_prev][$current] -= $minCapacity;
+
+                // 逆向きの辺の容量を更新（存在しない場合は新たに追加）
+                if (!isset($this->graph[$current][$to_prev])) {
+                    $this->graph[$current][$to_prev] = 0;
+                }
+				// 進んだ容量分増やす
+                $this->graph[$current][$to_prev] += $minCapacity;
+
+                $current = $to_prev;
+            }
+
+            // ノードの訪問状態をリセット
+            $this->visited = array_fill(0, count($this->graph), false);
+        }
+
+        return $maxFlow;
+    }
+
+    /**
+     * 優先順位を考慮して増加パスを見つけるメソッド
+     *
+     * @param int   $startNode        始発点のノード
+     * @param int   $endNode          終着点のノード
+     * @param int   $employeeCount    従業員数
+     * @param array $sortedEmployee   従業員を優先順にソートした配列
+     *
+     * @return array|null 増加パスを表すノードの配列（見つからない場合はnull）
+     */
+    public function findPriorityPath($startNode, $endNode, $employeeCount, $sortedEmployee)
+    {
+        $searchReservedNode = [$startNode]; // 探索予定のノードリスト
+        $path = []; // 増加パス
+
+        $this->visited = array_fill(0, count($this->graph), false);
+        $this->visited[$startNode] = true;
+
+        while (!empty($searchReservedNode)) {
+            // 探索するノード
+            $current = array_shift($searchReservedNode);
+
+            // 現在のノードが持つ優先グラフを探索(優先)順にソート
+            asort($this->priority[$sortedEmployee[$current]]);
+
+			// 隣接ノードを探索する
+            // 従業員ノードを探索する場合は優先順位の高いシフトノードから探索する
+            if ($current <= 1 && $current >= $employeeCount) {
+                foreach (array_keys($this->priority[$sortedEmployee[$current]]) as $neighbor) {
+                    if ($this->nodeSearch($endNode, $searchReservedNode, $path, $current)) {
+                        return $path;
+                    }
+                }
+            } else {
+                foreach (array_keys($this->graph[$current]) as $neighbor) {
+                    if ($this->nodeSearch($endNode, $searchReservedNode, $path, $current)) {
+                        return $path;
+                    }
+                }
+            }
+        }
+
+		// 増加パスが見つからない場合
+        return null;
+    }
+
+    /**
+     * グラフ中のノードを探索するメソッド
+     *
+     * @param int   $endNode            終着ノード
+     * @param array $searchReservedNode 探索予定のノード (参照渡し)
+     * @param array $path               増加パス (参照渡し)
+     * @param int   $neighbor           隣接ノード番号
+     * @param int   $current            現在のノード番号
+     * 
+     * @return true|null
+     */
+    private function nodeSearch($endNode, &$searchReservedNode, &$path, $neighbor, $current)
+    {
+        // 未訪問かつ増加パスの隣接ノードである場合
+        if (!$this->visited[$neighbor] && $this->graph[$current][$neighbor] > 0) {
+            $path[$neighbor] = $current; // 増加パスを格納
+            $this->visited[$neighbor] = true; // 訪問済みとする
+
+            // 終着ノードに到達した場合は増加パスを返す
+            if ($neighbor == $endNode) {
+                return true;
+            }
+
+            // 隣接ノードを探索予定ノードにする
+            $searchReservedNode[] = $neighbor;
+        }
+    }
 }
 
 
@@ -146,7 +277,7 @@ while (true) {
 // フォードファルカーソン法
 $matching = new Matching($graph, $priority);
 $sortedEmployee = $matching->rearrangingNode($employeeCount, $shiftCount);
-$maxFlow = $matching->maxFlow(0, $totalNumberNode-1);
+$maxFlow = $matching->maxMatch(0, $totalNumberNode-1, $employeeCount, $sortedEmployee);
 
 // 更新されたグラフ(残余グラフ)
 $afterGraph = $matching->getGraph();
