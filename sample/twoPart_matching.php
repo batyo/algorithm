@@ -166,20 +166,25 @@ class Matching extends FordFulkerson
         while (!empty($searchReservedNode)) {
             // 探索するノード
             $current = array_shift($searchReservedNode);
-            
-			// 隣接ノードを探索する
-            // 従業員ノードを探索する場合は優先順位の高いシフトノードから探索する
-            if ($current <= 1 && $current >= $employeeCount) {
+            /**
+             * 隣接ノードを探索する
+             * 
+             * 従業員ノードを探索する場合は優先順位の高いシフトノードから探索する
+             */
+            if ($current >= 1 && $current <= $employeeCount) {
                 // 現在のノードが持つ優先グラフを探索(優先)順にソート
                 $priorityKey = $sortedEmployee[$current-1];
                 asort($this->priority[$priorityKey]);
-
+                
+                // 優先グラフを参照して隣接ノードを探索する
                 foreach (array_keys($this->priority[$priorityKey]) as $neighbor) {
+                    // 終着ノードに到達した場合、増加パスを返す
                     if ($this->nodeSearch($endNode, $searchReservedNode, $path, $neighbor, $current)) {
                         return $path;
                     }
                 }
             } else {
+                // グラフを参照して隣接ノードを探索する
                 foreach (array_keys($this->graph[$current]) as $neighbor) {
                     if ($this->nodeSearch($endNode, $searchReservedNode, $path, $neighbor, $current)) {
                         return $path;
@@ -201,7 +206,7 @@ class Matching extends FordFulkerson
      * @param int   $neighbor           隣接ノード番号
      * @param int   $current            現在のノード番号
      * 
-     * @return true|null
+     * @return true|null 終着ノードに到達した場合は true 到着しない場合は null
      */
     private function nodeSearch($endNode, &$searchReservedNode, &$path, $neighbor, $current)
     {
@@ -210,7 +215,7 @@ class Matching extends FordFulkerson
             $path[$neighbor] = $current; // 増加パスを格納
             $this->visited[$neighbor] = true; // 訪問済みとする
 
-            // 終着ノードに到達した場合は増加パスを返す
+            // 終着ノードに到達した場合
             if ($neighbor == $endNode) {
                 return true;
             }
