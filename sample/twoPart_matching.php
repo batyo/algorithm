@@ -102,7 +102,7 @@ class Matching extends FordFulkerson
     {
         $maxFlow = 0; // 最大流量
 
-        while ($path = $this->findPath($startNode, $endNode, $employeeCount, $sortedEmployee)) {
+        while ($path = $this->findPriorityPath($startNode, $endNode, $employeeCount, $sortedEmployee)) {
             
             $INF = PHP_INT_MAX; // 無限
             $minCapacity = $INF; // 最小容量
@@ -159,28 +159,29 @@ class Matching extends FordFulkerson
     {
         $searchReservedNode = [$startNode]; // 探索予定のノードリスト
         $path = []; // 増加パス
-
+        
         $this->visited = array_fill(0, count($this->graph), false);
         $this->visited[$startNode] = true;
 
         while (!empty($searchReservedNode)) {
             // 探索するノード
             $current = array_shift($searchReservedNode);
-
-            // 現在のノードが持つ優先グラフを探索(優先)順にソート
-            asort($this->priority[$sortedEmployee[$current]]);
-
+            
 			// 隣接ノードを探索する
             // 従業員ノードを探索する場合は優先順位の高いシフトノードから探索する
             if ($current <= 1 && $current >= $employeeCount) {
-                foreach (array_keys($this->priority[$sortedEmployee[$current]]) as $neighbor) {
-                    if ($this->nodeSearch($endNode, $searchReservedNode, $path, $current)) {
+                // 現在のノードが持つ優先グラフを探索(優先)順にソート
+                $priorityKey = $sortedEmployee[$current-1];
+                asort($this->priority[$priorityKey]);
+
+                foreach (array_keys($this->priority[$priorityKey]) as $neighbor) {
+                    if ($this->nodeSearch($endNode, $searchReservedNode, $path, $neighbor, $current)) {
                         return $path;
                     }
                 }
             } else {
                 foreach (array_keys($this->graph[$current]) as $neighbor) {
-                    if ($this->nodeSearch($endNode, $searchReservedNode, $path, $current)) {
+                    if ($this->nodeSearch($endNode, $searchReservedNode, $path, $neighbor, $current)) {
                         return $path;
                     }
                 }
