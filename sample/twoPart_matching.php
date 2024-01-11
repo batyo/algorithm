@@ -146,7 +146,7 @@ class Matching extends FordFulkerson
     }
 
     /**
-     * 優先順位を考慮して増加パスを見つけるメソッド
+     * シフトの優先順位を考慮して増加パスを見つけるメソッド
      *
      * @param int   $startNode        始発点のノード
      * @param int   $endNode          終着点のノード
