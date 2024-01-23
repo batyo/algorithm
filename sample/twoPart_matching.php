@@ -20,13 +20,16 @@ class Matching extends FordFulkerson
      * 
      * 1. シフトの選択肢が少ない従業員のノードから探索するようにする
      * 2. 優先順位の高いノードにノード番号が小さいシフトを持つ従業員から探索するようにする
+     * 
+     * 従業員ノードの並び替え、及びそれに伴う各ノードの接続情報を調整する
      *
-     * @param int $employeeCount    従業員数
-     * @param int $shiftCount       シフト数
+     * @param int   $employeeCount      従業員数
+     * @param int   $shiftCount         シフト数
+     * @param array $employeeCapacity   従業員の容量
      * 
      * @return array 探索順に従業員番号が格納された配列
      */
-    public function rearrangingNode($employeeCount, $shiftCount)
+    public function rearrangingNode($employeeCount, $shiftCount, $employeeCapacity)
     {
         // シフトの選択肢が少ない従業員のノードから探索するようにする
         $choiceCount_list = [];
@@ -71,11 +74,14 @@ class Matching extends FordFulkerson
         // 探索順に並び替えられた従業員番号
         $priorityOrder = array_keys($lastSort);
 
-        // 並び替えた従業員に合わせたシフトをセットする
+        // 並び替えた従業員に合わせた始発ノード情報、及びシフト情報をセットする
         $saveShift = [];
         for ($i = 1; $i <= count($priorityOrder); $i++) {
             $employeeNumber = $priorityOrder[$i-1];
             $saveShift[$i] = $this->graph[$i]; // 上書きする前に保存
+
+            // 並び替え結果を始発ノードが持つ接続情報に反映
+            $this->graph[0][$i] = $employeeCapacity[$employeeNumber];
             
             // シフト情報取得
             $shiftInfo;
@@ -237,10 +243,27 @@ fscanf(STDIN, "%d %d", $employeeCount, $shiftCount);
 
 $totalNumberNode = $employeeCount + $shiftCount + 2; // 始発・終着ノード分足す
 
+$employeeCapacity = []; // 従業員の容量
+$shiftCapacity = []; // シフトの容量
+
+// 従業員の容量入力
+for ($i = 1; $i <= $employeeCount; $i++) {
+    echo "Enter the capacity of employee ".$i.":";
+    fscanf(STDIN, "%d", $employeeCapacity[$i]);
+}
+
+// シフトの容量入力
+for ($i = 1; $i <= $shiftCount; $i++) {
+    echo "Enter the capacity of shift ".$i.":";
+    fscanf(STDIN, "%d", $shiftCapacity[$i]);
+}
+
 // グラフの初期化
 $graph = array_fill(0, $totalNumberNode, array_fill(0, $totalNumberNode, 0));
-for ($employee = 1; $employee <= $employeeCount; $employee++) $graph[0][$employee] = 1; // 始発ノード
-for ($shift = 1; $shift <= $shiftCount; $shift++) $graph[$shift+$employeeCount][$totalNumberNode-1] = 1; // 終着ノード
+for ($employee = 1; $employee <= $employeeCount; $employee++) $graph[0][$employee] = $employeeCapacity[$employee]; // 始発ノード
+for ($shift = 1; $shift <= $shiftCount; $shift++) {
+    $graph[$shift+$employeeCount][$totalNumberNode-1] = $shiftCapacity[$shift]; // 終着ノード
+}
 
 // 優先順位グラフの初期化
 $priority = array_fill(0, $totalNumberNode, array_fill(0, $totalNumberNode, -1));
@@ -282,12 +305,13 @@ while (true) {
 
 // フォードファルカーソン法
 $matching = new Matching($graph, $priority);
-$sortedEmployee = $matching->rearrangingNode($employeeCount, $shiftCount);
+$sortedEmployee = $matching->rearrangingNode($employeeCount, $shiftCount, $employeeCapacity);
+//echo print_r($matching->getGraph());
 $maxFlow = $matching->maxMatch(0, $totalNumberNode-1, $employeeCount, $sortedEmployee);
 
 // 更新されたグラフ(残余グラフ)
 $afterGraph = $matching->getGraph();
-
+//echo print_r($afterGraph);
 // シフトマッチング結果
 for ($shift = 1; $shift <= $shiftCount; $shift++) {
     for ($employee = 1; $employee <= $employeeCount; $employee++) {
