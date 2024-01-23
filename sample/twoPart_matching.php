@@ -306,12 +306,16 @@ while (true) {
 // フォードファルカーソン法
 $matching = new Matching($graph, $priority);
 $sortedEmployee = $matching->rearrangingNode($employeeCount, $shiftCount, $employeeCapacity);
+
 //echo print_r($matching->getGraph());
+
 $maxFlow = $matching->maxMatch(0, $totalNumberNode-1, $employeeCount, $sortedEmployee);
 
 // 更新されたグラフ(残余グラフ)
 $afterGraph = $matching->getGraph();
+
 //echo print_r($afterGraph);
+
 // シフトマッチング結果
 for ($shift = 1; $shift <= $shiftCount; $shift++) {
     for ($employee = 1; $employee <= $employeeCount; $employee++) {
