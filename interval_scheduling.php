@@ -44,9 +44,9 @@ class IntervalScheduling
     private function compare_asc($first, $second)
     {
         // 並び替えなし
-        if ($first['end'] == $second['end']) return 0;
+        if ($first["end_time"] == $second["end_time"]) return 0;
 
-        $compare = $first['end'] < $second['end'];
+        $compare = $first["end_time"] < $second["end_time"];
 
         // 昇順に並び替える
         if ($compare) return -1; // $second のインデックス値より 1 小さい
