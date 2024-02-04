@@ -23,3 +23,7 @@ If you have any suggestions for improvement, please feel free to leave a comment
 * シフトノードから終着ノードへの増加パスを変更することで「シフト」に割り当てることができる「従業員」の人数を操作できます
 * 始発ノードから従業員ノードへの増加パスを変更することで「従業員」に割り振ることができる「シフト」の数を操作できます
 * [twoPart_matching_flowChart.md](https://github.com/batyo/algorithm/blob/master/twoPart_matching_flowChart.md "フォールドファルカーソン法を応用した二部マッチング")
+### interval_scheduling
+* 貪欲法による区間スケジューリング
+* 選択するイベント数を最大化するアルゴリズム
+* 今後、日付型のデータからでも処理できるように改良する予定
