@@ -5,6 +5,9 @@
  */
 class Dijkstra
 {
+    /** @var int 無限 */
+    const INF = PHP_INT_MAX;
+
     /**
      * 緩和を実施する関数
      *
@@ -29,9 +32,11 @@ class Dijkstra
      * @param int   $nodeCount      ノードの総数
      * @param int   $startNode      始発ノードの番号
      * @param array $dist           距離 (*参照渡し)
-     * @param int|float $INF        無限 (実際に無限である必要は無い)
+     * @param int|float $INF        無限 (デフォルト値 PHP_INT_MAX)
+     * 
+     * @return void
      */
-    public function dijkstra(&$adjacentList, $nodeCount, $startNode, &$dist, $INF) : void
+    public function dijkstra(&$adjacentList, $nodeCount, $startNode, &$dist, $INF = INF)
     {
         $used = array_fill(0, $nodeCount, false);
         $dist[$startNode] = 0;
