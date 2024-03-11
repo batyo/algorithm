@@ -32,12 +32,13 @@ class Dijkstra
      * @param int   $nodeCount      ノードの総数
      * @param int   $startNode      始発ノードの番号
      * @param array $dist           距離 (*参照渡し)
-     * @param int|float $INF        無限 (デフォルト値 PHP_INT_MAX)
      * 
      * @return void
      */
-    public function dijkstra(&$adjacentList, $nodeCount, $startNode, &$dist, $INF = INF)
+    public function dijkstra(&$adjacentList, $nodeCount, $startNode, &$dist)
     {
+        $INF = INF;
+
         $used = array_fill(0, $nodeCount, false);
         $dist[$startNode] = 0;
         for ($iter = 0; $iter < $nodeCount; $iter++) {
@@ -61,5 +62,70 @@ class Dijkstra
             }
             $used[$min_v] = true; // 探索済みにする
         }
+    }
+
+    /**
+     * ダイクストラ法
+     *
+     * @param array $adjacentList   隣接リスト (*参照渡し)
+     * @param int   $nodeCount      ノードの総数
+     * @param int   $startNode      始発ノードの番号
+     * @param array $dist           距離 (*参照渡し)
+     * @param array $prev           経路 (*参照渡し)
+     * 
+     * @return void
+     */
+    public function dijkstra_dist(&$adjacentList, $nodeCount, $startNode, &$dist, &$prev)
+    {
+        $INF = INF;
+
+        $used = array_fill(0, $nodeCount, false);
+        $dist[$startNode] = 0;
+        for ($iter = 0; $iter < $nodeCount; $iter++) {
+            // 使用済みでない頂点のうち dist 値が最小の頂点を探す
+            $min_dist = $INF;
+            $min_v = -1;
+            for ($v = 0; $v < $nodeCount; $v++) {
+                if (!$used[$v] && $dist[$v] < $min_dist) {
+                    $min_dist = $dist[$v];
+                    $min_v = $v;
+                }
+            }
+            // もしそのような頂点が見つからなければ終了
+            if ($min_v == -1) break;
+
+            // min_v を始点とした各辺を探索する
+            $nextStaNumber = array_keys($adjacentList[$min_v]);
+            $nextStaDist = array_values($adjacentList[$min_v]);
+            for ($i = 0; $i < count($nextStaNumber); $i++) {
+                // 緩和
+                if ($this->chmin($dist[$nextStaNumber[$i]], $dist[$min_v] + $nextStaDist[$i])) {
+                    $prev[$nextStaNumber[$i]] = $min_v; // 前の駅情報を保存
+                }
+            }
+            $used[$min_v] = true; // 探索済みにする
+        }
+    }
+
+    /**
+     * 始発から目的地までのパスを取得する
+     *
+     * @param array $prev           1つ前のノード番号を持つ配列
+     * @param int   $destination    目的地のノード番号
+     * 
+     * @return array 始発から目的地までの経路
+     */
+    public function getPath($prev, $destination)
+    {
+        $reversePath = array();
+
+        // 目的地から遡ってパスを取得する
+        for ($cur = $destination; $cur != -1; $cur = $prev[$cur]){
+            array_push($reversePath, $cur); // 配列に追加
+        }
+
+        $path = array_reverse($reversePath); // リバースして始発順にする
+        
+        return $path;
     }
 }
