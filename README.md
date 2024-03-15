@@ -17,6 +17,13 @@ If you have any suggestions for improvement, please feel free to leave a comment
 * 深さ優先探索
 * 始発ノードから N ステップで到達できるノードを探します
 * `$path` に探索開始から到達までに経由したノード番号が格納されます
+### dijkstra/dijkstra
+* ダイクストラ法を用いた単一始点最短経路問題
+* 隣接するノード間の距離は全て 1 としている
+### dijkstra/associative_array
+* ダイクストラ法を用いた単一始点最短経路問題
+* 隣接ノード情報と距離情報を持つ連想配列
+* 自由に距離情報を持たせることができる
 ### twoPart_matching
 * フォードファルカーソン法を応用した二部マッチング問題
 * 「従業員」と「シフト」を従業員の希望を考慮しながらマッチング数が最大になるようマッチングさせます
