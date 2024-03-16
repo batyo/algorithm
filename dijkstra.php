@@ -39,28 +39,32 @@ class Dijkstra
     {
         $INF = INF;
 
-        $used = array_fill(0, $nodeCount, false);
-        $dist[$startNode] = 0;
+        $visited = array_fill(0, $nodeCount, false); // 訪問チェック
+        $dist[$startNode] = 0; // 始点からの最短距離
+
         for ($iter = 0; $iter < $nodeCount; $iter++) {
-            // 使用済みでない頂点のうち dist 値が最小の頂点を探す
+
+            // 訪問済みでない頂点のうち dist 値が最小の頂点 min_v を探す
             $min_dist = $INF;
             $min_v = -1;
             for ($v = 0; $v < $nodeCount; $v++) {
-                if (!$used[$v] && $dist[$v] < $min_dist) {
+                if (!$visited[$v] && $dist[$v] < $min_dist) {
                     $min_dist = $dist[$v];
                     $min_v = $v;
                 }
             }
+
             // もしそのような頂点が見つからなければ終了
             if ($min_v == -1) break;
 
-            // min_v を始点とした各辺を探索する
+            // min_v を始点とした隣接するノードを探索する
             $nextSta = array_values($adjacentList[$min_v]);
             for ($i = 0; $i < count($nextSta); $i++) {
                 // 緩和
                 $this->chmin($dist[$nextSta[$i]], $dist[$min_v] + 1);
             }
-            $used[$min_v] = true; // 探索済みにする
+
+            $visited[$min_v] = true; // 探索済みにする
         }
     }
 
@@ -79,22 +83,25 @@ class Dijkstra
     {
         $INF = INF;
 
-        $used = array_fill(0, $nodeCount, false);
-        $dist[$startNode] = 0;
+        $visited = array_fill(0, $nodeCount, false); // 訪問チェック
+        $dist[$startNode] = 0; // 始点からの最短距離
+
         for ($iter = 0; $iter < $nodeCount; $iter++) {
-            // 使用済みでない頂点のうち dist 値が最小の頂点を探す
+
+            // 訪問済みでない頂点のうち dist 値が最小の頂点を探す
             $min_dist = $INF;
             $min_v = -1;
             for ($v = 0; $v < $nodeCount; $v++) {
-                if (!$used[$v] && $dist[$v] < $min_dist) {
+                if (!$visited[$v] && $dist[$v] < $min_dist) {
                     $min_dist = $dist[$v];
                     $min_v = $v;
                 }
             }
+
             // もしそのような頂点が見つからなければ終了
             if ($min_v == -1) break;
 
-            // min_v を始点とした各辺を探索する
+            // min_v を始点とした隣接するノードを探索する
             $nextStaNumber = array_keys($adjacentList[$min_v]);
             $nextStaDist = array_values($adjacentList[$min_v]);
             for ($i = 0; $i < count($nextStaNumber); $i++) {
@@ -103,7 +110,8 @@ class Dijkstra
                     $prev[$nextStaNumber[$i]] = $min_v; // 前の駅情報を保存
                 }
             }
-            $used[$min_v] = true; // 探索済みにする
+
+            $visited[$min_v] = true; // 探索済みにする
         }
     }
 
