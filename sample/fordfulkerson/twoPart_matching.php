@@ -3,12 +3,15 @@
 require_once("../../twoPart_matching.php");
 
 
+// コンソール画面での実行を想定しています
+
+
 // グラフの隣接行列
 
 $employeeCount = 0; // 従業員数
 $shiftCount = 0; // シフト数
 
-echo "Employee Shift:";
+echo "Employee Shift:"; // 従業員数 (半角スペース) シフト数
 fscanf(STDIN, "%d %d", $employeeCount, $shiftCount);
 
 $totalNumberNode = $employeeCount + $shiftCount + 2; // 始発・終着ノード分足す
@@ -35,11 +38,9 @@ for ($shift = 1; $shift <= $shiftCount; $shift++) {
     $graph[$shift+$employeeCount][$totalNumberNode-1] = $shiftCapacity[$shift]; // 終着ノード
 }
 
-// 優先順位グラフの初期化
-$priority = array_fill(0, $totalNumberNode, array_fill(0, $totalNumberNode, -1));
+$priority = array_fill(0, $totalNumberNode, array_fill(0, $totalNumberNode, -1)); // 優先順位グラフの初期化
 
-// 優先順位の重複チェック
-$priorityRankCheck = [];
+$priorityRankCheck = []; // 優先順位の重複チェック
 
 // グラフ入力
 while (true) {
@@ -55,9 +56,10 @@ while (true) {
 
     $inputChecked = false;
     while ( !$inputChecked ) {
-        echo "employee preferredShift priorityRank:";
+        echo "employee preferredShift priorityRank:"; // 従業員ノード番号 希望シフトノード番号 優先順位
         fscanf(STDIN, "%d %d %d", $employeeNumber, $preferredShift, $priorityRank);
 
+        // 優先順位の重複
         if (isset($priorityRankCheck[$employeeNumber][$priorityRank])) {
             echo "That priority is already set. Please re-enter.".PHP_EOL;
             continue;
@@ -68,6 +70,7 @@ while (true) {
 
     $priorityRankCheck[$employeeNumber][$priorityRank] = "set";
 
+    // ノード接続
     $graph[$employeeNumber][$preferredShift] = 1;
     $priority[$employeeNumber][$preferredShift] = $priorityRank;
 }
@@ -77,7 +80,7 @@ while (true) {
 $matching = new Matching($graph, $priority);
 $sortedEmployee = $matching->rearrangingNode($employeeCount, $shiftCount, $employeeCapacity);
 
-echo print_r($matching->getGraph());
+//echo print_r($matching->getGraph());
 
 $maxFlow = $matching->maxMatch(0, $totalNumberNode-1, $employeeCount, $sortedEmployee);
 
